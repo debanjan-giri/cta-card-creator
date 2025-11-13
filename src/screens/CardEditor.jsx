@@ -10,6 +10,7 @@ import {
   CgBorderTop,
 } from "react-icons/cg";
 import { TbBorderCorners } from "react-icons/tb";
+import { MdOpacity } from "react-icons/md";
 
 const CardEditor = ({ onChange, changedData, modalComponent }) => {
   const [state, setState] = useState({
@@ -52,13 +53,13 @@ const CardEditor = ({ onChange, changedData, modalComponent }) => {
     setState(newState);
 
     if (onChange) {
-      const borderOpacity =
+      const formattedOpacityborder =
         key === "borderOpacity"
           ? `border-opacity-${value}`
           : newState.borderOpacity
           ? `border-opacity-${newState.borderOpacity}`
           : "";
-      const cardbgopacity =
+      const formattedOpacitycardbg =
         key === "cardbgopacity"
           ? `bg-opacity-${value}`
           : newState.cardbgopacity
@@ -69,10 +70,10 @@ const CardEditor = ({ onChange, changedData, modalComponent }) => {
         cardbgImage: newState.cardbgImage,
         cardbgcolor: newState.cardbgcolor,
         color: newState.color,
-        cardbgopacity: cardbgopacity,
+        cardbgopacity: formattedOpacitycardbg,
         border: newState.border,
         borderColor: newState.borderColor,
-        borderOpacity: borderOpacity,
+        borderOpacity: formattedOpacityborder,
         borderWidth: newState.borderWidth,
         extraClass: newState.extraClass,
         borderRadius: newState.borderRadius,
@@ -96,31 +97,39 @@ const CardEditor = ({ onChange, changedData, modalComponent }) => {
         <ColorPickerBox
           label={"Background Color"}
           data={{
-            primary: "#0000FF",
-            secondary: "#FF0000",
-            dark: "#000000",
-            light: "#FFFFFF",
+            primary: { label: "Primary", color: "#0d6efd" },
+            secondary: { label: "Secondary", color: "#6c757d" },
+            success: { label: "Success", color: "#198754" },
+            danger: { label: "Danger", color: "#dc3545" },
+            warning: { label: "Warning", color: "#ffc107" },
+            info: { label: "Info", color: "#0dcaf0" },
+            light: { label: "Light", color: "#f8f9fa" },
+            dark: { label: "Dark", color: "#212529" },
           }}
           value={state.cardbgcolor}
           setValue={(val) => handleStateChange("cardbgcolor", val)}
         />
       </div>
 
-      <div className="mb-3">
+      {/* <div className="mb-3">
         <ColorPickerBox
           label={"Text Color"}
           data={{
-            primary: "#0000FF",
-            secondary: "#FF0000",
-            dark: "#000000",
-            light: "#FFFFFF",
+            primary: { label: "Primary", color: "#0d6efd" },
+            secondary: { label: "Secondary", color: "#6c757d" },
+            success: { label: "Success", color: "#198754" },
+            danger: { label: "Danger", color: "#dc3545" },
+            warning: { label: "Warning", color: "#ffc107" },
+            info: { label: "Info", color: "#0dcaf0" },
+            light: { label: "Light", color: "#f8f9fa" },
+            dark: { label: "Dark", color: "#212529" },
           }}
           value={state.color}
           setValue={(val) => handleStateChange("color", val)}
         />
-      </div>
+      </div> */}
 
-      {/* <div className="mb-3">
+      <div className="mb-3">
         <Selector
           data={[
             { key: "25", label: "25%", icon: MdOpacity },
@@ -128,11 +137,11 @@ const CardEditor = ({ onChange, changedData, modalComponent }) => {
             { key: "75", label: "75%", icon: MdOpacity },
             { key: "100", label: "100%", icon: MdOpacity },
           ]}
-          label={"Card Opacity"}
+          label={"Card Background Opacity"}
           value={state.cardbgopacity}
-          setValue={(val) => handleStateChange("cardbgopacity", val)}
+          onSelect={(val) => handleStateChange("cardbgopacity", val)}
         />
-      </div> */}
+      </div>
       <div className="mb-3">
         <Selector
           label={"Border"}
@@ -151,15 +160,14 @@ const CardEditor = ({ onChange, changedData, modalComponent }) => {
         <ColorPickerBox
           label={"Border Color"}
           data={{
-            "border-white": "#FFFFFF",
-            "border-dark": "#000000",
-            "border-light": "#FFFFFF",
-            "border-info": "#0000FF",
-            "border-warning": "#FF0000",
-            "border-danger": "#FF0000",
-            "border-success": "#00FF00",
-            "border-secondary": "#FF0000",
-            "border-primary": "#0000FF",
+            "border-primary": { label: "Primary", color: "#0d6efd" },
+            "border-secondary": { label: "Secondary", color: "#6c757d" },
+            "border-success": { label: "Success", color: "#198754" },
+            "border-danger": { label: "Danger", color: "#dc3545" },
+            "border-warning": { label: "Warning", color: "#ffc107" },
+            "border-info": { label: "Info", color: "#0dcaf0" },
+            "border-light": { label: "Light", color: "#f8f9fa" },
+            "border-dark": { label: "Dark", color: "#212529" },
           }}
           value={state.borderColor}
           setValue={(val) => handleStateChange("borderColor", val)}
@@ -179,7 +187,7 @@ const CardEditor = ({ onChange, changedData, modalComponent }) => {
           onSelect={(position) => handleStateChange("borderRadius", position)}
         />
       </div>
-      {/* <div className="mb-3">
+      <div className="mb-3">
         <Selector
           label={"Border Opacity"}
           data={[
@@ -189,20 +197,26 @@ const CardEditor = ({ onChange, changedData, modalComponent }) => {
             { key: "100", label: "100%", icon: MdOpacity },
           ]}
           value={state.borderOpacity}
-          setValue={(val) => handleStateChange("borderOpacity", val)}
+          onSelect={(val) => handleStateChange("borderOpacity", val)}
         />
-      </div> */}
+      </div>
 
       {/* slider bar or increment bar */}
       <div className="mb-3">
         <DropdownBox
-          label={"border width"}
+          label="Border Width"
           value={state.borderWidth}
           setValue={(val) => handleStateChange("borderWidth", val)}
-          data={["border-0", "border-1", "border-2", "border-3"]}
+          data={[
+            { label: "None", value: "border-0" },
+            { label: "Thin (1px)", value: "border-1" },
+            { label: "Medium (2px)", value: "border-2" },
+            { label: "Thick (3px)", value: "border-3" },
+            { label: "Thickest (4px)", value: "border-4" },
+          ]}
         />
       </div>
-      <div className="mb-3">
+      {/* <div className="mb-3">
         <InputBox
           label={"Extra Class"}
           isTextarea={true}
@@ -210,7 +224,7 @@ const CardEditor = ({ onChange, changedData, modalComponent }) => {
           value={state.extraClass}
           setValue={(val) => handleStateChange("extraClass", val)}
         />
-      </div>
+      </div> */}
       <div>{modalComponent}</div>
     </div>
   );

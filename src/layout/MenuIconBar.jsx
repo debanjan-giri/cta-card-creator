@@ -11,7 +11,7 @@ const MenuIconBar = ({ activeMenu, setActiveMenu, menuDetails }) => {
         return (
           <Button
             style={{
-              width: "90%",
+              width: "100%",
               minWidth: "30px",
               display: "flex",
               flexDirection: "column",

@@ -73,35 +73,59 @@ const ButtonEditor = ({ onChange, changedData, modalComponent }) => {
         <ColorPickerBox
           label={"Variation"}
           data={{
-            "btn-primary": "#0d6efd",
-            "btn-secondary": "#6c757d",
-            "btn-success": "#198754",
-            "btn-danger": "#dc3545",
-            "btn-warning": "#ffc107",
-            "btn-info": "#0dcaf0",
-            "btn-light": "#f8f9fa",
-            "btn-dark": "#212529",
-            "btn-link": "#0d6efd",
+            "btn-primary": { label: "Primary", color: "#0d6efd" },
+            "btn-secondary": { label: "Secondary", color: "#6c757d" },
+            "btn-success": { label: "Success", color: "#198754" },
+            "btn-danger": { label: "Danger", color: "#dc3545" },
+            "btn-warning": { label: "Warning", color: "#ffc107" },
+            "btn-info": { label: "Info", color: "#0dcaf0" },
+            "btn-light": { label: "Light", color: "#f8f9fa" },
+            "btn-dark": { label: "Dark", color: "#212529" },
+            "btn-link": { label: "Link", color: "#0d6efd" },
+            "btn-outline-primary": {
+              label: "Outline Primary",
+              color: "#0d6efd",
+            },
+            "btn-outline-secondary": {
+              label: "Outline Secondary",
+              color: "#6c757d",
+            },
+            "btn-outline-success": {
+              label: "Outline Success",
+              color: "#198754",
+            },
+            "btn-outline-danger": { label: "Outline Danger", color: "#dc3545" },
+            "btn-outline-warning": {
+              label: "Outline Warning",
+              color: "#ffc107",
+            },
+            "btn-outline-info": { label: "Outline Info", color: "#0dcaf0" },
+            "btn-outline-light": { label: "Outline Light", color: "#f8f9fa" },
+            "btn-outline-dark": { label: "Outline Dark", color: "#212529" },
           }}
           value={btn?.variation}
           setValue={(val) => handleUpdateButton(index, "variation", val)}
         />
       </div>
 
-      <div className="mb-3">
+      {/* <div className="mb-3">
         <ColorPickerBox
           label={"Button Text Color"}
-          disabled={btn.variation?.startsWith("btn-") ? true : false}
+          // disabled={btn.variation?.startsWith("btn-") ? true : false}
           data={{
-            primary: "#0000FF",
-            secondary: "#FF0000",
-            dark: "#000000",
-            light: "#FFFFFF",
+            primary: { label: "Primary", color: "#0d6efd" },
+            secondary: { label: "Secondary", color: "#6c757d" },
+            success: { label: "Success", color: "#198754" },
+            danger: { label: "Danger", color: "#dc3545" },
+            warning: { label: "Warning", color: "#ffc107" },
+            info: { label: "Info", color: "#0dcaf0" },
+            light: { label: "Light", color: "#f8f9fa" },
+            dark: { label: "Dark", color: "#212529" },
           }}
           value={btn.btnTextColor}
           setValue={(val) => handleUpdateButton(index, "btnTextColor", val)}
         />
-      </div>
+      </div> */}
 
       <div className="mb-3">
         <InputBox
@@ -119,7 +143,13 @@ const ButtonEditor = ({ onChange, changedData, modalComponent }) => {
           label={"Size"}
           value={btn.size}
           setValue={(val) => handleUpdateButton(index, "size", val)}
-          data={["sm", "md", "lg", "w-100", "value in px"]}
+          data={[
+            { label: "Small", value: "sm" },
+            { label: "Medium", value: "md" },
+            { label: "Large", value: "lg" },
+            { label: "Full Width", value: "w-100" },
+            // { label: "Custom (px)", value: "value in px" },
+          ]}
         />
       </div>
 
@@ -150,7 +180,12 @@ const ButtonEditor = ({ onChange, changedData, modalComponent }) => {
           label={"Action"}
           value={btn.action}
           setValue={(val) => handleUpdateButton(index, "action", val)}
-          data={["internal_redirect", "external_redirect"]}
+          data={[
+            { label: "Internal Redirect", value: "internal_redirect" },
+            { label: "External Redirect", value: "external_redirect" },
+            { label: "Consent", value: "open_consent" },
+            { label: "Form", value: "open_form" },
+          ]}
         />
       </div>
 
@@ -159,7 +194,7 @@ const ButtonEditor = ({ onChange, changedData, modalComponent }) => {
           label={"Start Endorment"}
           value={btn.startEndorment}
           setValue={(val) => handleUpdateButton(index, "startEndorment", val)}
-          placeholder={"Set svg or icon"}
+          placeholder={"Submit Svg or Image Url"}
         />
       </div>
 
@@ -168,10 +203,10 @@ const ButtonEditor = ({ onChange, changedData, modalComponent }) => {
           label={"End Endorment"}
           value={btn.endEndorment}
           setValue={(val) => handleUpdateButton(index, "endEndorment", val)}
-          placeholder={"Set svg or icon"}
+          placeholder={"Submit Svg or Image Url"}
         />
       </div>
-      <div className="mb-3">
+      {/* <div className="mb-3">
         <InputBox
           label={"Extra Class"}
           isTextarea={true}
@@ -179,7 +214,7 @@ const ButtonEditor = ({ onChange, changedData, modalComponent }) => {
           setValue={(val) => handleUpdateButton(index, "extraClass", val)}
           placeholder={"Set extra class"}
         />
-      </div>
+      </div> */}
     </div>
   );
 

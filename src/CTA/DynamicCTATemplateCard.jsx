@@ -1,3 +1,11 @@
+import React, { memo, useState } from "react";
+import { toast } from "react-toastify";
+import FormQuestionModal from "./FormQuestionModal";
+import parse from "html-react-parser";
+import "../css/global.css";
+import { Fade } from "react-bootstrap";
+import { utils } from "../utils/cssExtractor";
+
 const reactHtmlParser = (_params) => {
   if (_params || typeof _params == "string") {
     return parse(`${_params}`);
@@ -17,14 +25,6 @@ export const openNewTab = (url, cb) => {
     }
   }
 };
-
-import React, { memo, useState } from "react";
-import { toast } from "react-toastify";
-import FormQuestionModal from "./FormQuestionModal";
-import parse from "html-react-parser";
-import "../css/global.css";
-import { Fade } from "react-bootstrap";
-import { utils } from "../utils/cssExtractor";
 
 export const DynamicCTATemplateCard = ({
   setActiveMenu,
@@ -133,7 +133,6 @@ export const DynamicCTATemplateCard = ({
         return "h5";
     }
   };
-  console.log("titletitle", title);
 
   const TitleTag = getTitleTag();
   const [showConsentModal, setShowConsentModal] = useState(false);
@@ -150,6 +149,7 @@ export const DynamicCTATemplateCard = ({
 
   const [showFormModal, setShowFormModal] = useState(false);
   const onHide = () => setShowFormModal(false);
+
   // Color handling
   const isHexColor = color?.startsWith("#");
   const titleTextStyle = isHexColor ? { color } : {};
@@ -179,8 +179,6 @@ export const DynamicCTATemplateCard = ({
   const cardBgStyle = cardBgIsHexColor ? { backgroundColor: cardbgcolor } : {};
   const cardBgClass = cardBgIsHexColor ? "" : `bg-${cardbgcolor}`;
 
-  console.log("cardBgIsHexColor", cardBgClass);
-
   const postForm = async (userInput) => {
     console.log("user has clicked submit button");
     if (
@@ -190,16 +188,7 @@ export const DynamicCTATemplateCard = ({
       return;
     }
     return;
-    // let response = await axiosInstance.post("cta/cta_submitted_forms", {
-    //   cta_id: ctaId,
-    //   cta_type: ctaType,
-    //   submitted_form_json: userInput,
-    // });
-    // console.log("response:", response);
-    // if (response.status == 200) {
-    //   toast.success("Your Response submitted successfully");
-    //   onHide();
-    // }
+    // API call implementation here
   };
 
   // Render tag component
@@ -213,7 +202,7 @@ export const DynamicCTATemplateCard = ({
           if (disablePropagation) {
             e.stopPropagation();
           }
-          setActiveMenu("tag");
+          setActiveMenu && setActiveMenu("tag");
         }}
         className={`${isHover ? "hover" : ""} `}
         style={utils(
@@ -250,7 +239,7 @@ export const DynamicCTATemplateCard = ({
           if (disablePropagation) {
             e.stopPropagation();
           }
-          setActiveMenu("title");
+          setActiveMenu && setActiveMenu("title");
         }}
         style={{
           ...utils(` ${titleOpacity} ${titleTextClass}`),
@@ -271,10 +260,8 @@ export const DynamicCTATemplateCard = ({
                 ...utils(`fw-bold ${titleExtraClass}`),
               },
             },
-
             reactHtmlParser(titleContent)
           )}
-
           {endEndorment && (
             <div style={{ ...utils("ms-2") }}>
               {reactHtmlParser(endEndorment)}
@@ -296,7 +283,7 @@ export const DynamicCTATemplateCard = ({
           if (disablePropagation) {
             e.stopPropagation();
           }
-          setActiveMenu("paragraph");
+          setActiveMenu && setActiveMenu("paragraph");
         }}
         style={{
           ...utils(
@@ -311,53 +298,125 @@ export const DynamicCTATemplateCard = ({
     );
   };
 
-  // render constant statement
-  const RenderConstantStatementModal = () => {
+  const RenderConsentStatementModal = () => {
     const onClickFn = async () => {
       setShowConsentModal(false);
-      if (showConsentDetails?.btn_url) {
-        openNewTab(showConsentDetails?.btn_url);
+
+      if (showConsentDetails?.btn_url && showConsentDetails?.btn_url.trim()) {
+        if (showConsentDetails?.action === "internal_redirect") {
+          const urls = showConsentDetails.btn_url.includes(",")
+            ? showConsentDetails.btn_url.split(",")
+            : [showConsentDetails.btn_url];
+          urls.forEach((url) => {
+            const cleanUrl = url.trim();
+            if (cleanUrl) {
+              window.location.href = cleanUrl;
+            }
+          });
+        } else {
+          openNewTab(showConsentDetails.btn_url);
+        }
+      }
+    };
+
+    const onCancel = () => {
+      setShowConsentModal(false);
+    };
+
+    const handleBackdropClick = (e) => {
+      if (e.target === e.currentTarget) {
+        setShowConsentModal(false);
       }
     };
 
     return (
       <div
         style={{
-          ...utils(
-            "w-100 h-100 bg-dark bg-opacity-75 rounded d-flex flex-column align-items-center justify-content-center position-absolute top-0 start-0 z-1"
-          ),
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 9999,
         }}
+        onClick={handleBackdropClick}
       >
-        <div style={{ ...utils("bg-white p-4 rounded-4") }}>
-          <Fade>
+        <div
+          style={{
+            backgroundColor: "white",
+            padding: "24px",
+            borderRadius: "16px",
+            margin: "20px",
+            maxWidth: "500px",
+            width: "90%",
+            position: "relative",
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Close (X) Button */}
+          <button
+            onClick={onCancel}
+            style={{
+              position: "absolute",
+              top: "12px",
+              right: "12px",
+              background: "transparent",
+              border: "none",
+              fontSize: "20px",
+              fontWeight: "bold",
+              cursor: "pointer",
+              lineHeight: "1",
+            }}
+            aria-label="Close"
+          >
+            ×
+          </button>
+
+          <div style={{ textAlign: "center" }}>
+            <p
+              style={{
+                fontSize: "1.1rem",
+                color: "#000",
+                fontWeight: "normal",
+                marginBottom: "20px",
+                lineHeight: "1.5",
+              }}
+            >
+              {showConsentDetails.consent_statement}
+            </p>
             <div
-              style={{ ...utils("rounded") }}
-              onClick={() => setShowConsentModal(false)}
-            ></div>
-          </Fade>
-          <div style={{ ...utils("rounded text-center") }}>
-            <Fade>
-              <p style={{ ...utils("fs-5 text-black fw-normal") }}>
-                {showConsentDetails.consent_statement}
-              </p>
+              style={{
+                display: "flex",
+                gap: "12px",
+                justifyContent: "center",
+              }}
+            >
               <button
-                style={{
-                  ...utils(
-                    "fs-4 bg-primary text-white fw-medium rounded text-center py-2 px-3 mt-3 ctaLink"
-                  ),
-                }}
+                className="btn btn-secondary"
+                style={{ padding: "8px 16px" }}
+                onClick={onCancel}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-primary"
+                style={{ padding: "8px 16px" }}
                 onClick={onClickFn}
               >
                 I agree
               </button>
-            </Fade>
+            </div>
           </div>
         </div>
       </div>
     );
   };
 
-  // Render button component
+  // FIXED: Button rendering with proper size classes and action handling
   const renderButtons = (atBottom = false) => {
     if (!button.length) return null;
 
@@ -367,7 +426,7 @@ export const DynamicCTATemplateCard = ({
           if (disablePropagation) {
             e.stopPropagation();
           }
-          setActiveMenu("button");
+          setActiveMenu && setActiveMenu("button");
         }}
         style={{
           ...utils(
@@ -383,87 +442,125 @@ export const DynamicCTATemplateCard = ({
           ),
         }}
       >
-        {console.log("btn.btnTextColor", button[0].variation)}
         {button.map((btn, index) => {
-          const buttonWidthClass = btn.size?.startsWith("w-") ? btn.size : "";
+          // FIXED: Proper button size handling
+          const getSizeClass = (size) => {
+            switch (size) {
+              case "sm":
+                return "btn-sm";
+              case "lg":
+                return "btn-lg";
+              case "w-100":
+                return "w-100";
+              case "md":
+              default:
+                return "";
+            }
+          };
+
+          const sizeClass = getSizeClass(btn.size);
           const btnVariationClass = btn.variation?.startsWith("btn-")
             ? btn.variation
-            : "";
+            : "btn-primary"; // Default fallback
           const buttonStyle = btn.variation?.startsWith("#")
             ? {
                 backgroundColor: btn.variation,
-                color: btn.btnTextColor,
+                color: btn.btnTextColor || "#fff",
                 border: "none",
               }
             : {};
-          // const buttonClassWraper = (btn.buttonClassWraper?.startsWith('w-') || btn.buttonClassWraper?.startsWith('btn-')) ? btn.buttonClassWraper : '';
 
-          const buttonClass = ` ${buttonWidthClass} ${btnVariationClass} ${btn.extraClass}`;
-          const buttonWraper = `${buttonWidthClass}`;
+          const buttonClass = `btn ${btnVariationClass} ${sizeClass} ${
+            btn.extraClass || ""
+          }`.trim();
 
-          const buttonUrl =
-            typeof btn?.action === "string" &&
-            btn?.action === "internal_redirect"
-              ? btn?.url.split(",")
-              : btn?.url;
+          // FIXED: Proper action handling
+          const handleButtonClick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            // Check for consent statement first
+            if (
+              btn?.consent_statement &&
+              typeof btn?.consent_statement === "string" &&
+              btn?.consent_statement?.trim().length > 0
+            ) {
+              setShowConsentModal(true);
+              setShowConsentDetails({
+                consent_statement: btn?.consent_statement,
+                cta_type: ctaType,
+                cta_type_id: ctaId,
+                btn_url: btn?.url,
+                action: btn?.action,
+              });
+              return;
+            }
+
+            // Check for form
+            if (Array.isArray(formJson) && formJson?.length > 0) {
+              setShowFormModal(true);
+              return;
+            }
+
+            // Handle URL actions
+            if (btn?.url && btn?.url.trim()) {
+              if (btn?.action === "internal_redirect") {
+                // For internal redirect - could be multiple URLs
+                const urls = btn.url.includes(",")
+                  ? btn.url.split(",")
+                  : [btn.url];
+                urls.forEach((url) => {
+                  const cleanUrl = url.trim();
+                  if (cleanUrl) {
+                    // For internal redirect, you might want to use window.location.href
+                    // or React Router navigation instead of openNewTab
+                    window.location.href = cleanUrl;
+                  }
+                });
+              } else {
+                // External redirect or default - opens in new tab
+                openNewTab(btn.url.trim());
+              }
+            }
+          };
 
           return (
             <div
               title="Button"
               key={index}
               style={{
-                ...utils(` d-flex align-items-center ${buttonWraper}`),
+                ...utils(
+                  `d-flex align-items-center ${
+                    btn.size === "w-100" ? "w-100" : ""
+                  }`
+                ),
               }}
               className={`${isHover ? "hover pe-4" : ""}`}
             >
               <button
                 type="button"
-                style={{
-                  ...utils(`btn ${buttonClass} flex-shrink-0`),
-                  ...buttonStyle,
-                }}
-                // onClick={() => btn.url && window.open(btn.url, '_blank')}
-
-                onClick={() => {
-                  if (
-                    btn?.consent_statement &&
-                    typeof btn?.consent_statement === "string" &&
-                    btn?.consent_statement?.trim().length > 0
-                  ) {
-                    setShowConsentModal(true);
-                    setShowConsentDetails({
-                      consent_statement: btn?.consent_statement,
-                      cta_type: ctaType,
-                      cta_type_id: ctaId,
-                      btn_url: btn?.url,
-                    });
-                  } else if (Array.isArray(formJson) && formJson?.length > 0) {
-                    setShowFormModal(true);
-                    return;
-                  } else if (btn?.action === "internal_redirect") {
-                    openNewTab(buttonUrl);
-                  } else {
-                    openNewTab(buttonUrl);
-                  }
-                }}
+                className={buttonClass}
+                style={buttonStyle}
+                onClick={handleButtonClick}
               >
                 <div
                   style={{
-                    ...utils(
-                      "d-flex align-items-center justify-content-center text-nowrap"
-                    ),
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    whiteSpace: "nowrap",
                   }}
                 >
-                  {btn.startEndorment && (
-                    <div style={{ ...utils("me-2") }}>
+                  {btn.startEndorment && btn.startEndorment.trim() && (
+                    <span style={{ marginRight: "8px" }}>
                       {reactHtmlParser(btn.startEndorment)}
-                    </div>
+                    </span>
                   )}
-                  {reactHtmlParser(btn.content)}
-                  {btn.endEndorment && (
-                    <div style={{ ...utils("ms-2") }}>
+                  {btn.content && reactHtmlParser(btn.content)}
+                  {btn.endEndorment && btn.endEndorment.trim() && (
+                    <span style={{ marginLeft: "8px" }}>
                       {reactHtmlParser(btn.endEndorment)}
-                    </div>
+                    </span>
                   )}
                 </div>
               </button>
@@ -474,14 +571,13 @@ export const DynamicCTATemplateCard = ({
     );
   };
 
-  // Image positioning logic
+  // Image positioning logic (unchanged, assuming it works correctly)
   const renderImageBasedOnPosition = () => {
     const image = imageObject[0];
     if (!image) return null;
 
     const { url, position, size, alt = "Card Image", extraClass } = image;
 
-    // Handle different image positions
     const positionLayouts = {
       top: { flexDirection: "flex-column" },
       top_center: { flexDirection: "flex-column align-items-center" },
@@ -529,7 +625,6 @@ export const DynamicCTATemplateCard = ({
     );
   };
 
-  // Standard layout for top/bottom/left/right positions
   const renderStandardLayout = (
     flexDirection,
     url,
@@ -538,24 +633,27 @@ export const DynamicCTATemplateCard = ({
     extraClass,
     position
   ) => (
-    <div style={{ ...utils(`d-flex ${flexDirection}`) }}>
-      <div style={{ ...utils(`d-flex flex-shrink-0 `) }}>
-        {/* ${position !== 'left' ? 'w-100' : ''}  */}
+    <div style={{ ...utils(`d-flex ${flexDirection} align-items-center`) }}>
+      <div
+        style={{
+          ...utils(
+            `d-flex flex-shrink-0 align-items-center justify-content-center`
+          ),
+        }}
+      >
         <img
           onClick={(e) => {
             if (disablePropagation) {
               e.stopPropagation();
             }
-            setActiveMenu("imageObject");
+            setActiveMenu && setActiveMenu("imageObject");
           }}
           src={url}
           alt={alt}
-          // ${position !== 'left' ? 'w-100' : ''}
           style={{
             ...utils(`object-fit-cover ${extraClass}`),
-            aspectRatio: position === "left" ? "4/3" : "16/9",
-            width: size || "75px",
-            minHeight: position === "left" ? "100%" : null,
+            height: size || "75px",
+            width: "auto",
           }}
           title="Image"
           className={`${isHover ? "hover" : ""}`}
@@ -572,7 +670,6 @@ export const DynamicCTATemplateCard = ({
     </div>
   );
 
-  // Top left/right layout
   const renderTopLeftRightLayout = (isTopLeft, url, size, alt, extraClass) => (
     <div style={{ ...utils("position-relative") }}>
       {renderTag()}
@@ -591,13 +688,15 @@ export const DynamicCTATemplateCard = ({
               if (disablePropagation) {
                 e.stopPropagation();
               }
-              setActiveMenu("imageObject");
+              setActiveMenu && setActiveMenu("imageObject");
             }}
             src={url}
             alt={alt}
             style={{
-              ...utils(`d-flex flex-shrink-0  w-auto mw-25 ${extraClass}`),
+              ...utils(`d-flex flex-shrink-0 ${extraClass}`),
               height: size || "36px",
+              width: "auto",
+              maxWidth: "100%",
             }}
             title="Image"
             className={`${isHover ? "hover" : ""}`}
@@ -610,7 +709,6 @@ export const DynamicCTATemplateCard = ({
     </div>
   );
 
-  // Bottom left/right layout
   const renderBottomLeftRightLayout = (
     isBottomLeft,
     url,
@@ -647,13 +745,15 @@ export const DynamicCTATemplateCard = ({
               if (disablePropagation) {
                 e.stopPropagation();
               }
-              setActiveMenu("imageObject");
+              setActiveMenu && setActiveMenu("imageObject");
             }}
             src={url}
             alt={alt}
             style={{
-              ...utils(`d-flex flex-shrink-0 w-auto mw-25 ${extraClass}`),
+              ...utils(`d-flex flex-shrink-0 ${extraClass}`),
               height: size || "36px",
+              width: "auto",
+              maxWidth: "100%",
             }}
             title="Image"
             className={`${isHover ? "hover" : ""}`}
@@ -664,7 +764,6 @@ export const DynamicCTATemplateCard = ({
     </div>
   );
 
-  // Default layout when no image position is specified
   const renderDefaultLayout = () => (
     <div style={{ ...utils("position-relative") }}>
       <div
@@ -690,52 +789,60 @@ export const DynamicCTATemplateCard = ({
   );
 
   return (
-    <div
-      title="Card"
-      onClick={(e) => {
-        if (disablePropagation) {
-          e.stopPropagation();
-        }
-        setActiveMenu("cardStyle");
-      }}
-      style={{
-        ...utils(`overflow-hidden position-relative ${
+    <>
+      <div
+        title="Card"
+        onClick={(e) => {
+          if (disablePropagation) {
+            e.stopPropagation();
+          }
+          setActiveMenu && setActiveMenu("cardStyle");
+        }}
+        className={`overflow-hidden mb-4 dynamic_Cta_Main ${
           cardbgImage ? "position-relative" : ""
         } 
-    ${border} ${borderColor} ${borderOpacity} ${borderWidth} 
-    ${cardExtraClass} ${cardTextClass} ${borderRadius} ${cardBgClass}`),
-        ...cardBgStyle,
-        ...cardTextStyle,
-      }}
-      className={`${isHover ? "hover" : ""}`}
-    >
-      {cardbgImage && (
-        <div
-          style={{ ...utils("position-absolute top-0 start-0 w-100 h-100") }}
-        >
-          <img src={cardbgImage} alt="" style={{ ...utils("w-100 h-100") }} />
-          {cardBgClass && (
-            <div
-              style={{
-                ...utils(
-                  `position-absolute z-1 top-0 start-0 w-100 h-100 ${cardBgClass}`
-                ),
-                "--bs-bg-opacity": cardbgopacity || 0.85,
-              }}
-            ></div>
-          )}
-        </div>
-      )}
-      {renderImageBasedOnPosition()}
-      {Array.isArray(formJson) && formJson?.length > 0 && (
+        ${border} ${borderColor} ${borderOpacity} ${borderWidth} 
+        ${cardExtraClass} ${cardTextClass} ${borderRadius} ${cardBgClass} ${cardbgopacity} ${
+          isHover ? "hover" : ""
+        }`}
+        style={{
+          ...cardBgStyle,
+          ...cardTextStyle,
+        }}
+      >
+        {cardbgImage && (
+          <div className="position-absolute top-0 start-0 w-100 h-100">
+            <img
+              src={cardbgImage}
+              alt=""
+              className="w-100 h-100 object-fit-cover"
+            />
+            {cardBgClass && (
+              <div
+                className={`position-absolute z-1 top-0 start-0 w-100 h-100 ${cardBgClass}`}
+                style={{
+                  "--bs-bg-opacity": cardbgopacity
+                    ? cardbgopacity.replace("bg-opacity-", "") / 100
+                    : 0.85,
+                }}
+              ></div>
+            )}
+          </div>
+        )}
+
+        {renderImageBasedOnPosition()}
+      </div>
+
+      {/* FIXED: Modal rendering outside main container */}
+      {showConsentModal && <RenderConsentStatementModal />}
+      {showFormModal && (
         <FormQuestionModal
           show={showFormModal}
           onHide={onHide}
-          submitClick={postForm}
-          form={formJson}
+          formJson={formJson}
+          postForm={postForm}
         />
       )}
-      {showConsentModal && <RenderConstantStatementModal />}
-    </div>
+    </>
   );
 };

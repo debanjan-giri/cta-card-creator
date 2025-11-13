@@ -313,7 +313,9 @@ const BootstrapVisualController = ({
         onClick={() => setShowModal(true)}
         disabled={disabled}
       >
-        <FiBox className="" />{isLightButton ? "Advanced" : "Style Controller"}
+        {/* <FiBox className="" />{isLightButton ? "Advanced" : "Style Controller"} */}
+        <FiBox className="" />
+        {" Advance controller"}
       </Button>
 
       {showModal && (
@@ -326,7 +328,8 @@ const BootstrapVisualController = ({
               <div className="modal-header bg-white border-bottom py-3 px-4">
                 <h5 className="modal-title d-flex align-items-center gap-2">
                   <FiSun className="text-primary" />
-                  <span className="fw-semibold text-dark">Style Controller:
+                  <span className="fw-semibold text-dark">
+                    Style Controller:
                   </span>
                   <Badge
                     bg="secondary"
@@ -365,8 +368,9 @@ const BootstrapVisualController = ({
                             style={{ width: "auto" }}
                           >
                             <button
-                              className={`tab-btn ${activeTab === section.key ? "active" : ""
-                                }`}
+                              className={`tab-btn ${
+                                activeTab === section.key ? "active" : ""
+                              }`}
                               onClick={() => setActiveTab(section.key)}
                             >
                               {section.icon}
@@ -410,7 +414,7 @@ const BootstrapVisualController = ({
                       </div>
                     </div>
 
-                    <div className="bg-white rounded-3 border shadow-sm p-3">
+                    {/* <div className="bg-white rounded-3 border shadow-sm p-3">
                       <label className="form-label fw-semibold small text-muted mb-2">
                         Generated Classes for{" "}
                         {
@@ -427,7 +431,7 @@ const BootstrapVisualController = ({
                         placeholder="Enter Bootstrap classes manually..."
                         style={{ fontSize: "0.8em", resize: "none" }}
                       />
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>

@@ -14,7 +14,7 @@ const sampleData = {
       bgColor: "",
       textColor: "dark",
       borderRadius: "rounded-start",
-      bgOpacity: "bg-opacity-10",
+      bgOpacity: "",
       extraClass: "mt-3 ms-3",
     },
     title: {
@@ -47,7 +47,7 @@ const sampleData = {
     cardStyle: {
       cardbgcolor: "white",
       color: "primary",
-      cardbgopacity: "bg-opacity-10",
+      cardbgopacity: "",
       border: "",
       borderColor: "",
       borderOpacity: "",
@@ -60,7 +60,7 @@ const sampleData = {
         url: "https://img-cdn.clirnet.com/medwiki/43_server/video/1722859266_1654599815_having-schizophrenia-and-paranoia-can-be-lonely.png",
         position: "top-right",
         size: "45px",
-        alt: "image text",
+        alt: "",
         extraClass: "",
       },
     ],

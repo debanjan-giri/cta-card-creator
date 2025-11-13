@@ -1,5 +1,5 @@
 import React, { memo, useRef, useState, useEffect } from "react";
-import { Accordion, Badge, Button, Card, Stack } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Mousewheel } from "swiper/modules";
 import "swiper/css";
@@ -7,74 +7,72 @@ import "swiper/css/free-mode";
 import "swiper/css/mousewheel";
 
 import { DynamicCTATemplateCard } from "../CTA/DynamicCTATemplateCard";
-import GeminJsonCreator from "../utils/GeminJsonCreator";
-import { Copy, IdCardIcon } from "lucide-react";
+import { Copy, FileText, Eye } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
-import parse from 'html-react-parser';
-
+import FormPage from "../screens/FormPage";
 
 const CardPreview = memo(
-  ({ editorData, activeMenu, setActiveMenu, isHover, domTree = "", setDomTree = () => { } }) => {
-    const [open, setOpen] = useState(false);
-    const [activeTab, setActiveTab] = useState("Json"); // Default to JSON tab
+  ({
+    editorData,
+    setActiveMenu,
+    isHover,
+    domTree = "",
+    setDomTree = () => {},
+    setFormHtml = () => {},
+  }) => {
+    const [previewTab, setPreviewTab] = useState("Card");
     const containerRef = useRef(null);
 
     useEffect(() => {
       if (containerRef.current) {
-        // Get the outer HTML (or you can recursively build a custom tree)
         setDomTree(containerRef.current.outerHTML);
       }
     }, [editorData]);
 
-    console.log("domTree", domTree);
-
-    const handleCopy = (data) => {
-      const copyData =
-        typeof data === "string" ? data : JSON.stringify(data, null, 2);
-      navigator.clipboard.writeText(copyData);
-      toast.success(`Copied to clipboard`);
-    };
-
-    // Tab configuration
-    const tabs = [
-      { key: "Json", title: "JSON" },
-      { key: "Html", title: "HTML" },
+    const previewTabs = [
+      { key: "Card", title: "Card Preview", icon: Eye },
+      { key: "Form", title: "Form Preview", icon: FileText },
     ];
 
-    const getCurrentTabData = () => {
-      return activeTab === "Json" ? editorData : domTree;
-    };
+    // console.log(  editorData?.formJson, "editorData");
 
-    const renderTabContent = () => {
-      switch (activeTab) {
-        case "Json":
+    const renderPreviewContent = () => {
+      switch (previewTab) {
+        case "Card":
           return (
-            <pre
-              className="m-0"
-              style={{
-                whiteSpace: "pre-wrap",
-                wordBreak: "break-word",
-                overflow: "visible",
-                maxWidth: "100%",
-              }}
-            >
-
-              {JSON.stringify(editorData, null, 2)}
-            </pre>
+            <div ref={containerRef}>
+              {editorData ? (
+                <div className="bg-white rounded-3">
+                  <DynamicCTATemplateCard
+                    isHover={isHover}
+                    setActiveMenu={setActiveMenu}
+                    {...editorData}
+                  />
+                </div>
+              ) : (
+                <div className="text-muted fst-italic p-4 text-center">
+                  No card data available
+                </div>
+              )}
+            </div>
           );
-        case "Html":
+        case "Form":
           return (
-            <pre
-              className="m-0"
-              style={{
-                whiteSpace: "pre-wrap",
-                wordBreak: "break-word",
-                overflow: "visible",
-                maxWidth: "100%",
-              }}
-            >
-              {parse(`${domTree}`)}
-            </pre>
+            <div className="bg-white rounded-3">
+              {Array.isArray(editorData?.formJson) &&
+              editorData.formJson.length > 0 ? (
+                <FormPage
+                  setFormHtml={setFormHtml}
+                  formData={editorData.formJson}
+                  isPreview={true}
+                />
+              ) : (
+                <div className="text-muted fst-italic p-4 text-center">
+                  No form data available. Please configure the form in the
+                  editor.
+                </div>
+              )}
+            </div>
           );
         default:
           return null;
@@ -84,9 +82,8 @@ const CardPreview = memo(
     return (
       <div
         className="p-3 m-3 bg-light rounded shadow-sm"
-        style={{ maxHeight: "100%", overflow: "hidden" }}
+        style={{ maxHeight: "100%" }}
       >
-        {/* Tab Styles */}
         <style>{`
           .tab-btn {
             background: none;
@@ -123,6 +120,29 @@ const CardPreview = memo(
             margin-bottom: 0.25rem;
             font-size: 1.1rem;
           }
+          .preview-tab-btn {
+            background: none;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+            color: #6c757d;
+            position: relative;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+          }
+          .preview-tab-btn:hover {
+            color: #0d6efd;
+            background-color: #f8f9fa;
+          }
+          .preview-tab-btn.active {
+            color: #0d6efd;
+            background-color: #e3f2fd;
+          }
           /* Hide scrollbar for Chrome, Safari and Opera */
           .output-content::-webkit-scrollbar {
             display: none;
@@ -139,97 +159,25 @@ const CardPreview = memo(
           }
         `}</style>
 
-        <div className="bg-white rounded p-3 fw-semibold mb-3 d-flex justify-content-between align-items-center">
-          <span className="m-0">Card Preview</span>
-
-          <Stack direction="horizontal" gap={2}>
-            <Badge
-              bg="secondary"
-              style={{ cursor: "pointer" }}
-              onClick={() => {
-                setOpen(!open);
-              }}
+        {/* Only Card/Form Tabs */}
+        <div className="d-flex gap-1 border-bottom mb-3">
+          {previewTabs.map((tab) => (
+            <button
+              key={tab.key}
+              className={`preview-tab-btn ${
+                previewTab === tab.key ? "active" : ""
+              }`}
+              onClick={() => setPreviewTab(tab.key)}
             >
-              {open ? "Hide Output" : "Show Output"}
-            </Badge>
-          </Stack>
+              <tab.icon size={16} />
+              {tab.title}
+            </button>
+          ))}
         </div>
 
-        {open ? (
-          <div className="bg-white p-4 rounded-3 border shadow-sm">
-            {/* Tab Header with Navigation and Copy Button */}
-            <div className="tab-header ">
-              {/* Tab Navigation using Swiper */}
-              <Swiper
-                slidesPerView="auto"
-                spaceBetween={12}
-                modules={[Mousewheel]}
-                mousewheel={{ forceToAxis: true }}
-                grabCursor
-                freeMode={true}
-                style={{ width: "auto", flex: 1 }}
-              >
-                {tabs.map((tab) => (
-                  <SwiperSlide key={tab.key} style={{ width: "auto" }}>
-                    <button
-                      className={`tab-btn ${activeTab === tab.key ? "active" : ""
-                        }`}
-                      onClick={() => setActiveTab(tab.key)}
-                    >
-                      <span>{tab.title}</span>
-                      {activeTab === tab.key && <div className="underline" />}
-                    </button>
-                  </SwiperSlide>
-                ))}
-              </Swiper>
-
-              {/* Copy Button */}
-              <Button
-                variant="primary"
-                size="sm"
-                className="rounded d-flex align-items-center gap-1 ms-3"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleCopy(getCurrentTabData());
-                }}
-              >
-                Copy <Copy size={15} />
-              </Button>
-            </div>
-
-            {/* Tab Content */}
-            <div
-              className="output-content"
-              style={{
-                maxHeight: "500px",
-                overflow: "auto",
-                ...(activeTab.toLowerCase() === "html" && {
-                  border: "1px solid #dee2e6",
-                  borderRadius: "8px",
-                  pointerEvents: "none"
-                }),
-              }}
-            >
-              {renderTabContent()}
-            </div>
-          </div>
-        ) : (
-          <div ref={containerRef}>
-            {editorData ? (
-                <div className="bg-white rounded-3">
-                <DynamicCTATemplateCard
-                  isHover={isHover}
-                  setActiveMenu={setActiveMenu}
-                  {...editorData}
-                />
-              </div>
-            ) : (
-              <div className="text-muted fst-italic p-2">
-                No card data available
-              </div>
-            )}
-          </div>
-        )}
+        {/* Preview Content */}
+        <div>{renderPreviewContent()}</div>
+        {/* <div className="bg-white rounded-3 p-3">{renderPreviewContent()}</div> */}
 
         <ToastContainer position="top-center" autoClose={2000} />
       </div>

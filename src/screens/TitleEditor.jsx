@@ -97,10 +97,14 @@ const TitleEditor = ({ onChange, changedData, modalComponent }) => {
         <ColorPickerBox
           label="Color"
           data={{
-            primary: "#0000FF",
-            secondary: "#FF0000",
-            dark: "#000000",
-            light: "#FFFFFF",
+            primary: { label: "Primary", color: "#0d6efd" },
+            secondary: { label: "Secondary", color: "#6c757d" },
+            success: { label: "Success", color: "#198754" },
+            danger: { label: "Danger", color: "#dc3545" },
+            warning: { label: "Warning", color: "#ffc107" },
+            info: { label: "Info", color: "#0dcaf0" },
+            light: { label: "Light", color: "#f8f9fa" },
+            dark: { label: "Dark", color: "#212529" },
           }}
           disabled={isDisabled}
           value={state.color}
@@ -111,7 +115,7 @@ const TitleEditor = ({ onChange, changedData, modalComponent }) => {
       <div className="mb-3">
         <InputBox
           label="Start Endorment"
-          placeholder="Submit Svg"
+          placeholder="Submit Svg or Image Url"
           value={state.startEndorment}
           disabled={isDisabled}
           setValue={(val) => handleStateChange("startEndorment", val)}
@@ -121,14 +125,14 @@ const TitleEditor = ({ onChange, changedData, modalComponent }) => {
       <div className="mb-3">
         <InputBox
           label="End Endorment"
-          placeholder="Submit Svg"
+          placeholder="Submit Svg or Image Url"
           value={state.endEndorment}
           disabled={isDisabled}
           setValue={(val) => handleStateChange("endEndorment", val)}
         />
       </div>
 
-      <div className="mb-3">
+      {/* <div className="mb-3">
         <InputBox
           label="Custom Css"
           isTextarea={true}
@@ -137,7 +141,7 @@ const TitleEditor = ({ onChange, changedData, modalComponent }) => {
           disabled={isDisabled}
           setValue={(val) => handleStateChange("extraClass", val)}
         />
-      </div>
+      </div> */}
 
       {/* Modal container */}
       <div

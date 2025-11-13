@@ -93,7 +93,7 @@ const ImageEditor = ({ onChange, changedData, modalComponent }) => {
               label: "Bottom Right",
               icon: ArrowDownRight,
             },
-            { key: "top-center", label: "Top Center", icon: AlignCenter },
+            // { key: "top-center", label: "Top Center", icon: AlignCenter },
           ]}
           value={state.position}
           onSelect={(position) => handleStateChange("position", position)}
@@ -103,14 +103,14 @@ const ImageEditor = ({ onChange, changedData, modalComponent }) => {
       <div className="mb-3">
         <InputBox
           isDisabled={isDisabled}
-          label={"Alt Text"}
+          label={"Alternate Text"}
           value={state.alt}
           setValue={(val) => handleStateChange("alt", val)}
-          placeholder={"Enter Alt Text"}
+          placeholder={"Alternative Text (Shown if Image is not available)"}
         />
       </div>
 
-      <div className="mb-3">
+      {/* <div className="mb-3">
         <InputBox
           isDisabled={isDisabled}
           label={"Extra Class"}
@@ -119,7 +119,7 @@ const ImageEditor = ({ onChange, changedData, modalComponent }) => {
           isTextarea={true}
           setValue={(val) => handleStateChange("extraClass", val)}
         />
-      </div>
+      </div> */}
       <div
         style={{
           opacity: isDisabled ? 0.5 : 1,

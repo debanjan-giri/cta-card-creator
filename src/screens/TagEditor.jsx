@@ -63,9 +63,9 @@ const TagEditor = ({ onChange, changedData, modalComponent }) => {
     <div className="p-3 bg-white rounded shadow-sm ">
       <div className="mb-3">
         <InputBox
-          label={"text"}
+          label={"Text"}
           isTextarea={true}
-          placeholder={"text"}
+          placeholder={"Enter Text"}
           value={state.text}
           setValue={(val) => handleStateChange("text", val)}
         />
@@ -73,7 +73,7 @@ const TagEditor = ({ onChange, changedData, modalComponent }) => {
       <div className="mb-3">
         {/* required only left right */}
         <Selector
-          label={"tag position"}
+          label={"Tag position"}
           disabled={isDisabled}
           data={[
             { key: "left", label: "Left", icon: ArrowLeft },
@@ -88,10 +88,14 @@ const TagEditor = ({ onChange, changedData, modalComponent }) => {
           disabled={isDisabled}
           label={"Background Color"}
           data={{
-            primary: "#0000FF",
-            secondary: "#FF0000",
-            dark: "#000000",
-            light: "#FFFFFF",
+            primary: { label: "Primary", color: "#0d6efd" },
+            secondary: { label: "Secondary", color: "#6c757d" },
+            success: { label: "Success", color: "#198754" },
+            danger: { label: "Danger", color: "#dc3545" },
+            warning: { label: "Warning", color: "#ffc107" },
+            info: { label: "Info", color: "#0dcaf0" },
+            light: { label: "Light", color: "#f8f9fa" },
+            dark: { label: "Dark", color: "#212529" },
           }}
           value={state.bgColor}
           setValue={(val) => handleStateChange("bgColor", val)}
@@ -100,12 +104,16 @@ const TagEditor = ({ onChange, changedData, modalComponent }) => {
       <div className="mb-3">
         <ColorPickerBox
           disabled={isDisabled}
-          label={"text Color"}
+          label={"Text Color"}
           data={{
-            primary: "#0000FF",
-            secondary: "#FF0000",
-            dark: "#000000",
-            light: "#FFFFFF",
+            primary: { label: "Primary", color: "#0d6efd" },
+            secondary: { label: "Secondary", color: "#6c757d" },
+            success: { label: "Success", color: "#198754" },
+            danger: { label: "Danger", color: "#dc3545" },
+            warning: { label: "Warning", color: "#ffc107" },
+            info: { label: "Info", color: "#0dcaf0" },
+            light: { label: "Light", color: "#f8f9fa" },
+            dark: { label: "Dark", color: "#212529" },
           }}
           value={state.textColor}
           setValue={(val) => handleStateChange("textColor", val)}
@@ -142,7 +150,7 @@ const TagEditor = ({ onChange, changedData, modalComponent }) => {
           onSelect={(val) => handleStateChange("bgOpacity", val)}
         />
       </div>
-      <div className="mb-3">
+      {/* <div className="mb-3">
         <InputBox
           disabled={isDisabled}
           label={"Extra Class"}
@@ -151,7 +159,7 @@ const TagEditor = ({ onChange, changedData, modalComponent }) => {
           isTextarea={true}
           setValue={(val) => handleStateChange("extraClass", val)}
         />
-      </div>
+      </div> */}
       <div
         style={{
           opacity: isDisabled ? 0.5 : 1,

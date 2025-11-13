@@ -62,10 +62,14 @@ const ParagraphEditor = ({ onChange, changedData, modalComponent }) => {
           isDisabled={isDisabled}
           label={"Color"}
           data={{
-            primary: "#0000FF",
-            secondary: "#FF0000",
-            dark: "#000000",
-            light: "#FFFFFF",
+            primary: { label: "Primary", color: "#0d6efd" },
+            secondary: { label: "Secondary", color: "#6c757d" },
+            success: { label: "Success", color: "#198754" },
+            danger: { label: "Danger", color: "#dc3545" },
+            warning: { label: "Warning", color: "#ffc107" },
+            info: { label: "Info", color: "#0dcaf0" },
+            light: { label: "Light", color: "#f8f9fa" },
+            dark: { label: "Dark", color: "#212529" },
           }}
           value={state.color}
           setValue={(val) => handleStateChange("color", val)}
@@ -86,7 +90,7 @@ const ParagraphEditor = ({ onChange, changedData, modalComponent }) => {
         />
       </div>
 
-      <div className="mb-3">
+      {/* <div className="mb-3">
         <InputBox
           isDisabled={isDisabled}
           label={"Extra Class"}
@@ -95,7 +99,7 @@ const ParagraphEditor = ({ onChange, changedData, modalComponent }) => {
           value={state.extraClass}
           setValue={(val) => handleStateChange("extraClass", val)}
         />
-      </div>
+      </div> */}
       <div
         style={{
           opacity: isDisabled ? 0.5 : 1,
